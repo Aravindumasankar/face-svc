@@ -1,0 +1,10 @@
+version: '3.1'
+
+services:
+    
+  face-svc:
+    image: face-svc
+    network_mode: "host"
+    build:
+      context: .
+      dockerfile: face-svc/Dockerfile
