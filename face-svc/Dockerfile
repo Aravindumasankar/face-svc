@@ -1,8 +1,9 @@
 FROM python:3.6
 LABEL maintainer="aravind-umasankar"
-COPY . /app
+RUN apt-get update && apt-get install -y cmake
 WORKDIR /app
-RUN pip install -r requirements.txt
+COPY . /app/
+RUN pip3 install -r face-svc/requirements.txt
 EXPOSE 8080
 ENTRYPOINT ["python"]
-CMD ["app/app.py"]
+CMD ["face-svc/app/app.py"]
