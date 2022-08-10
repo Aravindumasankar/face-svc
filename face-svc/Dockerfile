@@ -5,6 +5,7 @@ RUN apt-get install ffmpeg libsm6 libxext6 libgl1 python3-opencv -y
 WORKDIR /app
 COPY . /app/
 RUN pip3 install -r face-svc/requirements.txt
+WORKDIR /app/face-svc/app/
 EXPOSE 8080
 ENTRYPOINT ["python"]
-CMD ["face-svc/app/app.py"]
+CMD ["app.py"]
