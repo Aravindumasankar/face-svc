@@ -2,3 +2,12 @@ flask
 itsdangerous==2.0.1
 werkzeug==0.16.1
 jinja2==3.0.3
+Pillow
+opencv-python
+imutils
+dlib
+scikit-learn
+face_recognition
+tensorflow
+numpy
+

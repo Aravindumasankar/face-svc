@@ -1,82 +1,71 @@
-from crypt import methods
-import json
+import os
+import uuid
+import face.recognition as face_recognition
+import face.emotion as emotion
 from flask import Flask, request, abort, jsonify
-from flask_restplus import Api, Resource, fields
-from functools import wraps
+
+app = Flask(__name__)
 
 
-flask_app = Flask(__name__)
-restful_app = Api(app = flask_app,
-          version = "1.0", 
-		  title = "Face Utility", 
-		  description = "Microservice for Face Utilities.")
-name_space = restful_app.namespace('face', description='Face API\'s')
+@app.route('/')
+def info():
+    data = {
+        "Name": "Face-svc",
+        "version": "v1",
+        "Author": "Aravind Umasankar",
+        "Description": "Face Utility Service"
+    }
+    return jsonify(data)
 
 
-# defining the APIs
-
-# def get(self):
-#     		return {
-# 			"status": "Got new data"
-#             }
-
-@name_space.route("/", methods = ['GET'])
-class MainClass(Resource):
-    @restful_app.doc(responses={ 200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error' }, 
-			 params={ 'key': 'Specify the key associated with the face image' })
-    def get(self):
-        def index():
-            data = {
-                'name': 'face-svc',
-                'version': 'v1',
-                'purpose': ['Face Detection', 'Face Recognition', 'Emotion Recognition'],
-                'author': 'aravind-umasankar'
-            }
-            resp = jsonify(data)
-            resp.status_code = 200
-            return resp
-        return {
-            "status" : "Data recieved"
-        }
-
-# model = restful_app.model('Face Model', 
-# 		            {'image': fields.String(required = True, 
-# 					 description="Face of the person")})
-
-# @name_space.route("/classify", methods = ['POST'])
-# class MainClass(Resource):
-# 	@restful_app.doc(responses={ 200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error' }, 
-# 			 params={ 'key': 'Specify the key associated with the face image' })
-# 	@restful_app.expect(model)		
-# 	def post(self, key):
-# 		try:
-# 			face_list[key] = request.json['image']
-# 			return {
-# 				"status": "New person image added",
-# 				"face_key": face_list[key]
-# 			}
-# 		except KeyError as e:
-# 			name_space.abort(500, e.__doc__, status = "Could not save information", statusCode = "500")
-# 		except Exception as e:
-# 			name_space.abort(400, e.__doc__, status = "Could not save information", statusCode = "400")
-
-	# def post(self):
-	# 	return {
-	# 		"status": "Posted new data"
-	# 	}
+allowed_ext = set(['png', 'jpg', 'jpeg'])
 
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_ext
 
 
-# @flask_app.route('/classify', methods=['POST'])
-# @require_appkey
-# def classify():
-#     data = {}
-#     data['msg'] = 'Unsupported Format. Required .png, .jpg, .jpeg'
-#     resp = jsonify(data)
-#     resp.status_code = 401
-#     return resp
+@app.route('/classify', methods=['POST'])
+def upload_file():
+    data = {}
+    upload_dir = 'uploads'
+    if not os.path.exists(upload_dir):
+        print("Uploads directory created")
+        os.makedirs(upload_dir)
+    if 'file' not in request.files:
+        data['msg'] = 'No file part in the request'
+        resp = jsonify(data)
+        resp.status_code = 400
+        return resp
+    file = request.files['file']
+    if file.filename == '':
+        data['msg'] = 'No file selected for uploading'
+        resp = jsonify(data)
+        resp.status_code = 400
+        return resp
+    if file and allowed_file(file.filename):
+        file_name, file_extension = os.path.splitext(file.filename)
+        data['original_file'] = file.filename
+        data['_id'] = str(uuid.uuid4())
+        file_name = data['_id'] + file_extension
+        file.save(os.path.join(upload_dir, file_name))
+        today_model_file = 'face/recognition/model/vadivelu_trained_knn_model_.clf'
+        data['face_recogniton'] = face_recognition.predict(request.url_root, data['file_name'], data['file_path'], None,
+                                                           today_model_file)
+        data['msg'] = 'File successfully uploaded'
+        resp = jsonify(data)
+        return resp
+    else:
+        data['msg'] = 'Allowed file types are txt, pdf, png, jpg, jpeg, gif'
+        resp = jsonify(data)
+        resp.status_code = 400
+        return resp
 
 
 if __name__ == "__main__":
-    flask_app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=8080)
+
+
+
+
+
