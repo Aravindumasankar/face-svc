@@ -28,7 +28,7 @@ def allowed_file(filename):
 @app.route('/classify', methods=['POST'])
 def upload_file():
     data = {}
-    upload_dir = 'uploads'
+    upload_dir = 'uploads/'
     if not os.path.exists(upload_dir):
         print("Uploads directory created")
         os.makedirs(upload_dir)
@@ -49,6 +49,9 @@ def upload_file():
         data['_id'] = str(uuid.uuid4())
         file_name = data['_id'] + file_extension
         file.save(os.path.join(upload_dir, file_name))
+        data['file_name'] = file_name
+        data['file_extension'] = file_extension
+        data['file_path'] = str(upload_dir + data['file_name'])
         today_model_file = 'face/recognition/model/vadivelu_trained_knn_model_.clf'
         data['face_recogniton'] = face_recognition.predict(request.url_root, data['file_name'], data['file_path'], None,
                                                            today_model_file)
