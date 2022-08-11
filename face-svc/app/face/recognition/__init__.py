@@ -65,7 +65,6 @@ model.add(Dense(7, activation='softmax'))
 
 model.load_weights('face/emotion/model/model.h5')
 
-
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 
@@ -152,7 +151,6 @@ def predict(root_url, filename, X_img_path, knn_clf=None, model_path=None, dista
     X_img = face.load_image_file(X_img_path)
     X_face_locations = face.face_locations(X_img)
 
-
     # If no faces are found in the image, return an empty result.
     if len(X_face_locations) == 0:
         data['faces'] = 0
@@ -170,11 +168,11 @@ def predict(root_url, filename, X_img_path, knn_clf=None, model_path=None, dista
                        zip(knn_clf.predict(faces_encodings), X_face_locations, are_matches)]
         data['model_path'] = model_path
         data['faces'] = len(predictions)
-        data['predictions'] = predictionsDump(root_url,filename, file_path, predictions)
+        data['predictions'] = predictionsDump(root_url, filename, file_path, predictions)
     return data
 
 
-def predictionsDump(root_url,filename, img_path, predictions):
+def predictionsDump(root_url, filename, img_path, predictions):
     # dictionary which assigns each label an emotion (alphabetical order)
     emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
     data = {}
@@ -211,13 +209,15 @@ def predictionsDump(root_url,filename, img_path, predictions):
                 os.makedirs('known_people/' + name)
             extracted_images.save('known_people/' + name + '/' + str(top) + '---' + filename, 'JPEG')
             data['extracted_images'].append(
-                {"name": name, "coordinates":[top,left,bottom,right],"path": root_url+'known_people/' + name + '/' + str(top) + '---' + filename, 'emotion': emotion})
+                {"name": name, "coordinates": [top, left, bottom, right],
+                 "path": root_url + 'known_people/' + name + '/' + str(top) + '---' + filename, 'emotion': emotion})
         else:
             if not os.path.exists('unknown_people/'):
                 os.makedirs('unknown_people/')
             extracted_images.save('unknown_people/' + str(top) + '---' + filename, 'JPEG')
             data['extracted_images'].append(
-                {"name": name, "coordinates":[top,left,bottom,right],"path": root_url+'unknown_people/' + str(top) + '---' + filename, 'emotion':emotion})
+                {"name": name, "coordinates": [top, left, bottom, right],
+                 "path": root_url + 'unknown_people/' + str(top) + '---' + filename, 'emotion': emotion})
         # There's a bug in Pillow where it blows up with non-UTF-8 text
         # when using the default bitmap font
         name = name.encode('UTF-8')
@@ -237,9 +237,10 @@ def predictionsDump(root_url,filename, img_path, predictions):
         print("New directory created")
         os.makedirs('processed/')
     pil_image.save('processed/' + filename, 'JPEG')
-    data['processed_image_file'] = root_url+'processed/'+filename
+    data['processed_image_file'] = root_url + 'processed/' + filename
     return data
+
 
 if __name__ == "__main__":
     today_model = 'model/' + 'today_model' + '_trained_knn_model.clf'
-    train('train', today_model,2)
+    train('train', today_model, 2)
