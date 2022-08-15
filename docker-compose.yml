@@ -2,15 +2,15 @@ version: '3.1'
 
 services:
     
-  face-svc:
-    image: face-svc
-    network_mode: "host"
-    build:
-      context: .
-      dockerfile: face-svc/Dockerfile
-  # object-svc:
-  #   image: object-svc
+  # face-svc:
+  #   image: face-svc
   #   network_mode: "host"
   #   build:
   #     context: .
-  #     dockerfile: object-svc/Dockerfile
+  #     dockerfile: face-svc/Dockerfile
+  object-svc:
+    image: object-svc
+    network_mode: "host"
+    build:
+      context: .
+      dockerfile: object-svc/Dockerfile
