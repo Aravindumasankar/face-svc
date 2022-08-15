@@ -1,19 +1,19 @@
 import os
 import uuid
-import face.recognition as face_recognition
-import face.emotion as emotion
-from flask import Flask, request, abort, jsonify
+import ocr
+from werkzeug.utils import secure_filename
+from flask import Flask, request, abort, jsonify, redirect
+from werkzeug.datastructures import ImmutableMultiDict
 
 app = Flask(__name__)
-
 
 @app.route('/')
 def info():
     data = {
-        "Name": "Face-svc",
+        "Name": "Ocr-svc",
         "version": "v1",
         "Author": "Yesvanthraja",
-        "Description": "Face Utility Service"
+        "Description": "Ocr Utility Service"
     }
     return jsonify(data)
 
@@ -32,11 +32,12 @@ def upload_file():
     if not os.path.exists(upload_dir):
         print("Uploads directory created")
         os.makedirs(upload_dir)
+    print(request.files)
     if 'file' not in request.files:
+        file = request.files['file']
         data['msg'] = 'No file part in the request'
         resp = jsonify(data)
         resp.status_code = 400
-        return resp
     file = request.files['file']
     if file.filename == '':
         data['msg'] = 'No file selected for uploading'
@@ -52,21 +53,21 @@ def upload_file():
         data['file_name'] = file_name
         data['file_extension'] = file_extension
         data['file_path'] = str(upload_dir + data['file_name'])
-        today_model_file = 'face/recognition/model/vadivelu_trained_knn_model_.clf'
-        data['face_recogniton'] = face_recognition.predict(request.url_root, data['file_name'], data['file_path'], None,
-                                                           today_model_file)
+        data['ocr'] = []
+        data['ocr'].append({"thresh": ocr.ocr(data['file_name'], data['file_path'], 'thresh'),
+                            "blur": ocr.ocr(data['file_name'], data['file_path'], 'blur')})
         data['msg'] = 'File successfully uploaded'
         resp = jsonify(data)
         return resp
     else:
-        data['msg'] = 'Allowed file types are png, jpg, jpeg'
+        data['msg'] = 'Allowed file types are  png, jpg, jpeg'
         resp = jsonify(data)
         resp.status_code = 400
         return resp
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=8082)
 
 
 
