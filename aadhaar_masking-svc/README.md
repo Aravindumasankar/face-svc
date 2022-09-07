@@ -1,23 +1,23 @@
-# tampering_detection-svc
+# ocr-svc
 Basic Python Flask app in Docker which prints the hostname and IP of the container
 
 ### Build application
 Build the Docker image manually by cloning the Git repo.
 ```
-$ git clone https://github.com/Aravindumasankar/tampering_detection-svc.git
-$ docker build -t vision-services/tampering_detection-svc .
+$ git clone https://github.com/Aravindumasankar/ocr-svc.git
+$ docker build -t vision-services/ocr-svc .
 ```
 
 ### Download precreated image
 You can also just download the existing image from [DockerHub](https://hub.docker.com/r/lvthillo/python-flask-docker/).
 ```
-docker pull /vision-services/tampering_detection-svc
+docker pull /vision-services/ocr-svc
 ```
 
 ### Run the container
 Create a container from the image.
 ```
-$ docker run --name tampering_detection-svc -d -p 8080:8080 vision-services/tampering_detection-svc
+$ docker run --name ocr-svc -d -p 8080:8080 vision-services/ocr-svc
 ```
 
 Now visit http://localhost:8080

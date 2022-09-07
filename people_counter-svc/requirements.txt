@@ -1,0 +1,11 @@
+flask
+itsdangerous==2.0.1
+werkzeug==0.16.1
+jinja2==3.0.3
+opencv-python
+pillow
+numpy
+imutils
+
+
+

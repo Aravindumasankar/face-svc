@@ -8,9 +8,31 @@ services:
   #   build:
   #     context: .
   #     dockerfile: face-svc/Dockerfile
-  object-svc:
-    image: object-svc
+  # object-svc:
+  #   image: object-svc
+  #   network_mode: "host"
+  #   build:
+  #     context: .
+  #     dockerfile: object-svc/Dockerfile
+
+  # ocr-svc:
+  #   image: ocr-svc
+  #   network_mode: "host"
+  #   build:
+  #     context: .
+  #     dockerfile: ocr-svc/Dockerfile
+
+  # people_counter-svc:
+  #   image: people_counter-svc
+  #   network_mode: "host"
+  #   build:
+  #     context: .
+  #     dockerfile: people_counter-svc/Dockerfile
+
+  tampering_detection-svc:
+    image: tampering_detection-svc
     network_mode: "host"
     build:
       context: .
-      dockerfile: object-svc/Dockerfile
+      dockerfile: tampering_detection-svc/Dockerfile
+  
